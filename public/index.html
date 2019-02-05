@@ -26,8 +26,29 @@
             <button id="join">Rejoindre</button>
         </section>
         <section>
-            Formulaire
-            <button>Valider</button>
+            <form id="profile-form">
+                <div>
+                    <label for="username">Nom d'utilisateur : </label>
+                    <input type="text" name="username" id="username" required>
+                </div>
+                <div>
+                    <label for="displayname">Nom affiché : </label>
+                    <input type="text" name="displayname" id="displayname">
+                </div>
+                <div>
+                    <label for="birthday">Date de naissance : </label>
+                    <input type="date" name="birthday" id="birthday" min="1900-01-01" max="2005-01-01">
+                </div>
+                <div>
+                    <label for="localisation">Localisation: </label>
+                    <input type="text" name="localisation" id="localisation">
+                </div>
+                <div>
+                    <label for="chatlabel">Label : </label>
+                    <output name="chatlabel" id="chatlabel"></output>
+                </div>
+                <button>Valider</button>
+            </form>
         </section>
         <section>
             Chat
@@ -40,4 +61,5 @@
     <script src="js/jquery.workflow.plugin.js"></script>
     <script src="js/chat.js"></script>
 </body>
+
 </html>
