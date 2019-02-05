@@ -1,4 +1,5 @@
 ($ => {
+    let username = "";
     function getAge(birthday) {
         const MS_PER_YEAR = 1000 * 60 * 60 * 24 * 364;
         return Math.floor((new Date() - birthday) / MS_PER_YEAR);
@@ -40,6 +41,34 @@
         }, () => $("#geoloc").prop("disabled", false));
     }
 
+    function connectToChat() {
+        const ws = new window.WebSocket('ws://localhost:3000/ws');
+
+        ws.onopen = () => {
+            $("#status").html("Connnected");
+            $("#input").prop("disabled", false);
+        };
+
+        ws.onerror = () => {
+            console.log("error");
+        };
+
+        ws.onmessage = (message) => {
+            console.log(message);
+            const data = JSON.parse(message.data);
+            $("#content").append(`<p><small>@${data.username}</small> ${data.msg}</p>`);
+        };
+
+        $("#send").click(() => {
+            if($("#input").val()) {
+                ws.send(JSON.stringify({
+                    username,
+                    msg: $("#input").val()
+                }));
+            }
+        });
+    }
+
     $("main").workflow();
 
     $("#join").click(() => {
@@ -53,6 +82,15 @@
     });
 
     $("#profile-form").on("input", updateChatLabel);
+
+    $("#validate-profile").click((e) => {
+        e.preventDefault();
+        if($("#profile-form")[0].checkValidity()) {
+            username = $("#username").val();
+            $("main").workflow("next");
+            connectToChat();
+        }
+    });
 
     updateChatLabel();
 })(jQuery);

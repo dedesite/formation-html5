@@ -48,11 +48,17 @@
                     <label for="chatlabel">Label : </label>
                     <output name="chatlabel" id="chatlabel"></output>
                 </div>
-                <button>Valider</button>
+                <button id="validate-profile">Valider</button>
             </form>
         </section>
         <section>
             Chat
+            <div id="content">
+            </div>
+            <div>
+                <span id="status">Connecting...</span>
+                <input type="text" id="input" disabled="disabled" /><button id="send">Send</button>
+            </div>
         </section>
     </main>
     <footer>
