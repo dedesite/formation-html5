@@ -20,10 +20,36 @@
         $("#chatlabel").html(label);
     }
 
+    function geoLocaliseProfile() {
+        $("#geoloc").prop("disabled", true);
+        navigator.geolocation.getCurrentPosition((pos) => {
+            // Get the town name from reverse geocoding
+            console.log(pos);
+            osmUrl = "https://nominatim.openstreetmap.org/reverse?json_callback=?";
+            $.getJSON(osmUrl, {
+                    lat: pos.coords.latitude,
+                    lon: pos.coords.longitude,
+                    format: "json"
+                })
+                .done(data => {
+                    $("#localisation").val(`${data.address.village}, ${data.address.country}`);
+                })
+                .fail(() => {
+                    $("#geoloc").prop("disabled", false);
+                })
+        }, () => $("#geoloc").prop("disabled", false));
+    }
+
     $("main").workflow();
 
     $("#join").click(() => {
         $("main").workflow("next");
+    });
+
+    $("#geoloc").click((e) => {
+        //Do not validate form
+        e.preventDefault();
+        geoLocaliseProfile();
     });
 
     $("#profile-form").on("input", updateChatLabel);
