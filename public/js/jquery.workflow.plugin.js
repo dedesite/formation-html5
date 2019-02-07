@@ -7,7 +7,7 @@
         }
 
         this.children("section").not(".active").hide();
-        this.children("section.active").show();
+        this.children("section.active").first().show();
         return this;
     };
 })(jQuery);
