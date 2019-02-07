@@ -25,7 +25,6 @@
         $("#geoloc").prop("disabled", true);
         navigator.geolocation.getCurrentPosition((pos) => {
             // Get the town name from reverse geocoding
-            console.log(pos);
             osmUrl = "https://nominatim.openstreetmap.org/reverse?json_callback=?";
             $.getJSON(osmUrl, {
                     lat: pos.coords.latitude,
@@ -33,7 +32,8 @@
                     format: "json"
                 })
                 .done(data => {
-                    $("#localisation").val(`${data.address.village}, ${data.address.country}`);
+                    const city = data.address.village || data.address.town || data.address.city;
+                    $("#localisation").val(`${city}, ${data.address.country}`);
                 })
                 .fail(() => {
                     $("#geoloc").prop("disabled", false);
@@ -89,6 +89,8 @@
             username = $("#username").val();
             $("main").workflow("next");
             connectToChat();
+        } else {
+            $("#profile-form")[0].reportValidity();
         }
     });
 
