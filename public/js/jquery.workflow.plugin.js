@@ -1,6 +1,63 @@
-($ => {
-    function manageHistory(el) {
-        const workflow = $(el).attr('data-workflow');
+const $ = window.$;
+
+const NAME = 'workflow';
+const JQUERY_NO_CONFLICT = $.fn[NAME];
+
+const Action = {
+    PREV: "prev",
+    NEXT: "next"
+};
+
+const TAG = "section";
+
+
+const ClassName = {
+    ACTIVE: "active"
+};
+
+const AttrName = {
+    WORKFLOW: "data-workflow"
+};
+
+const Selector = {
+    ACTIVE: `${TAG}.${ClassName.ACTIVE}`,
+    WORKFLOW: `${TAG}[${AttrName.WORKFLOW}=`
+};
+
+
+class Workflow {
+    constructor(element, config) {
+        this._element = element;
+
+        if (config === Action.NEXT || config === Action.PREV) {
+            const currActive = this._element.children(Selector.ACTIVE);
+            const nextActive = config === Action.NEXT ? currActive.next() : currActive.prev();
+            if(nextActive.length === 0) {
+                return false;
+            }
+            this.activateElement(nextActive);
+        }
+
+        const activeSection = this._element.children(Selector.ACTIVE).first();
+        this.showActiveElement(activeSection);
+
+        if(config && config.manageHistory) {
+            this.manageHistory(activeSection);
+
+            window.onpopstate = e => {
+                if(e.state !== null && e.state.workflow) {
+                    this.activateWorkflow(e.state.workflow);
+                }
+            }
+        }
+
+        if(config && config.handleHashChange) {
+            window.onhashchange = () => this.activateWorkflow(location.hash.substring(1));
+        }
+    }
+
+    manageHistory(el) {
+        const workflow = $(el).attr(AttrName.WORKFLOW);
         // Try to avoid having a first pushState but doesn't work with internal link
         // if(window.history.state === null) {
         //     console.log("replace", window.history);
@@ -11,52 +68,37 @@
         window.history.pushState({workflow}, workflow, `#${workflow}`);  
     }
 
-    function activateElement(parent, el) {
-        parent.children("section.active").removeClass("active");
+    activateElement(el) {
+        this._element.children(Selector.ACTIVE).removeClass(ClassName.ACTIVE);
         el.addClass("active");
     }
 
-    function showActiveElement(parent, el) {
-        parent.children("section").not(".active").hide();
+    showActiveElement(el) {
+        this._element.children(TAG).not(`.${ClassName.ACTIVE}`).hide();
         el.show();
     }
 
-    function activateWorkflow(workflow) {
-        const toActivate = currentEl.children(`section[data-workflow='${workflow}']`);
-        activateElement(currentEl, toActivate);
-        showActiveElement(currentEl, toActivate);
-    }
-
-    let currentEl = null;
-    window.onpopstate = e => {
-        if(e.state !== null && e.state.workflow) {
-            activateWorkflow(e.state.workflow);
+    activateWorkflow(workflow) {
+        const toActivate = this._element.children(`${Selector.WORKFLOW}'${workflow}']`).first();
+        if(toActivate.length) {
+            this.activateElement(toActivate);
+            this.showActiveElement(toActivate);
         }
     }
 
-    window.onhashchange = e => {
-        activateWorkflow(location.hash.substring(1));
+    static _jQueryInterface(config) {
+        return this.each((_, item) => {
+            new Workflow($(item), config);
+        })
     }
+}
 
-    $.fn.workflow = function(action) {
-        currentEl = this;
-        if (action === "next") {
-            const nextActive = this.children("section.active").next();
-            if(nextActive.length === 0) {
-                return false;
-            }
-            activateElement(this, nextActive);
-        } else if(action === "prev") {
-            const prevActive = this.children("section.active").prev();
-            if(prevActive.length === 0) {
-                return false;
-            }
-            activateElement(this, prevActive);
-        }
 
-        const activeSection = this.children("section.active").first();
-        showActiveElement(this, activeSection);
-        manageHistory(activeSection);
-        return this;
-    };
-})(jQuery);
+$.fn[NAME] = Workflow._jQueryInterface;
+$.fn[NAME].Constructor = Workflow;
+$.fn[NAME].noConflict = () => {
+  $.fn[NAME] = JQUERY_NO_CONFLICT;
+  return Workflow._jQueryInterface;
+}
+
+export default Workflow;
