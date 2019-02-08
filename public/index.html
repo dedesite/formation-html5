@@ -14,20 +14,20 @@
         <h1>Chat HTML5 + jQuery</h1>
         <nav>
             <ul class="nav">
-                <li class="nav-item active"><a class="nav-link" href="#">Accueil</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Profile</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Chat</a></li>
+                <li class="nav-item active"><a class="nav-link" href="#index">Accueil</a></li>
+                <li class="nav-item"><a class="nav-link" href="#profile">Profile</a></li>
+                <li class="nav-item"><a class="nav-link" href="#chat">Chat</a></li>
             </ul>
         </nav>
     </header>
     <main class="jumbotron">
-        <section class="active">
+        <section class="active" data-workflow="index">
             <p>
                 Bienvenue sur notre super chat !
             </p>
             <button type="button" class="btn btn-primary" id="join">Rejoindre</button>
         </section>
-        <section>
+        <section data-workflow="profile">
             <form id="profile-form">
                 <label for="username">Nom d'utilisateur</label>
                 <div class="input-group">
@@ -63,13 +63,14 @@
                 <button id="validate-profile" class="btn btn-primary">Valider</button>
             </form>
         </section>
-        <section>
-            Chat
-            <div id="content">
-            </div>
-            <div>
-                <span id="status">Connecting...</span>
-                <input type="text" id="input" disabled="disabled" /><button id="send">Send</button>
+        <section data-workflow="chat">
+            <div id="chat">
+                <h3>Chat <span class="badge badge-info" id="status">Connecting...</span></h3>
+                <div id="content">
+                </div>
+                <div>
+                    <input type="text" id="input" disabled="disabled" /> <button id="send" class="btn btn-primary">Send</button>
+                </div>
             </div>
         </section>
     </main>
