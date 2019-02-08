@@ -50,11 +50,11 @@
         };
 
         ws.onerror = () => {
-            console.log("error");
+            $("#status").html("Echec de connexion");
+            $("#input").prop("disabled", false);
         };
 
         ws.onmessage = (message) => {
-            console.log(message);
             const data = JSON.parse(message.data);
             $("#content").append(`<p><small>@${data.username}</small> ${data.msg}</p>`);
         };
