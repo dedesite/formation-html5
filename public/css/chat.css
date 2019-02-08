@@ -1,0 +1,8 @@
+#chat {
+	height: 600px;
+}
+
+#content {
+	height: 500px;
+	overflow: auto;
+}
